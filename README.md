@@ -19,11 +19,11 @@ This project has a large amount of code from the GitHub author <b>karakule3dfx<b
 This project would not have been possible without their source code that I used as a basis for this script. <br>
 So if you like this script, show them some love and give em a tip.<br>
 The code was modified and updated with features to match my needs.<br><br>
-If you want to support them, buy them a coffee ;)
-GitHub link: https://github.com/karakule3dfx
-OpenSea Collection Link: https://opensea.io/collection/fortune-cat-neko
-Paypal: https://paypal.me/klvntss
-Ethereum address: 0xd5146965809e4286e24dcf2bfbf58c3840d433a2
+If you want to support them, buy them a coffee ;)<br>
+GitHub link: https://github.com/karakule3dfx<br>
+OpenSea Collection Link: https://opensea.io/collection/fortune-cat-neko<br>
+Paypal: https://paypal.me/klvntss<br>
+Ethereum address: 0xd5146965809e4286e24dcf2bfbf58c3840d433a2<br>
 
 # Disclaimer
 This script does not collect or scrape any information while it is running.<br>
