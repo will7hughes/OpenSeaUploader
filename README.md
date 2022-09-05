@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/will7hughes/OpenSeaUploader/blob/main/cover.jpg" width="100%" />
+  <img src="https://github.com/will7hughes/OpenSeaUploader/blob/main/cover_uploader.jpg" width="100%" />
 </p>
 
 # OpenSea Uploader
