@@ -1,5 +1,7 @@
 <p align="center">
-  <img src="https://github.com/will7hughes/OpenSeaUploader/blob/main/cover_uploader.jpg" width="100%" />
+  <a href="https://opensea.io/collection/willow-away">
+    <img src="https://github.com/will7hughes/OpenSeaUploader/blob/main/cover_uploader.jpg" width="100%" />
+  </a>
 </p>
 
 # OpenSea Uploader
