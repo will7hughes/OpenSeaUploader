@@ -15,7 +15,7 @@ Venmo: @Willow_Hughes
 Wallet Address: <B>0xC2229aD79F60526CaD49629200584a81cC1B1b28</b><br>
 
 ## Support the Co-Author
-This project has a large amount of code from the GitHub author <b>karakule3dfx<b>. <br>
+This project has a large amount of code from the GitHub author <b>karakule3dfx</b>. <br>
 This project would not have been possible without their source code that I used as a basis for this script. <br>
 So if you like this script, show them some love and give em a tip.<br>
 The code was modified and updated with features to match my needs.<br><br>
