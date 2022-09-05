@@ -30,13 +30,6 @@ This script does not collect or scrape any information while it is running.<br>
 It is a good idea to look at the code yourself and understand the program before running it or modifying it.<br>
 We will not be liable for any losses and/or damages for using our script. <br>
 <b>Use at your own risk</b>
-  
-# Version Log
-<ul>
-  <li><b>Version 1.0.0 (upload.py)</b><br>
-      Initial version. Upload your preconfigured img and json files in the src directory.<br>
-  </li>
-</ul>
 
 # Instructions
 <ul>
@@ -82,13 +75,21 @@ Install the OpenSea Uploader Chrome Extension<br>
 * Navigate to this projects folder directory/chrome_extension<br>
 * Click Ok<br>
 * To run, click the extension and click "Upload NFTs"<br>
-<br><br>
-Install the following extensions<br>
+<br>
+
+## Install the following extensions<br>
 * I'm not a robot captcha click: https://chrome.google.com/webstore/detail/im-not-robot-captcha-clic/ceipnlhmjohemhfpbjdgeigkababhmjc<br>
 * Buster Captcha Solver: https://chrome.google.com/webstore/detail/buster-captcha-solver-for/mpbjkejclgfgadiemmefgebjfooflfhl?hl=en-US<br>
 
+## Version Log
+<ul>
+  <li><b>Version 1.0.0 (upload.py)</b><br>
+      Initial version. Upload your preconfigured img and json files in the src directory.<br>
+  </li>
+</ul>
+
 # Message for a MacOS user
-Currently this script only tested in Windows 10. Not compatible for MacOS. Subject to change in the future. Send me an email <b>willowawaymarket@gmail.com</b><br>
+Currently this script only tested in Windows 10. Not compatible for MacOS. Subject to change in the future. Send me an email <b>willowawaymarket@gmail.com</b>
 If you'd like to see a MacOS version in the future.
 
 # Contact me
