@@ -88,18 +88,19 @@ Install the following extensions<br>
 * Buster Captcha Solver: https://chrome.google.com/webstore/detail/buster-captcha-solver-for/mpbjkejclgfgadiemmefgebjfooflfhl?hl=en-US<br>
 
 # Message for a MacOS user
-Currently this script only tested in Windows 10. Not compatible for MacOS. Subject to change in the future. Send me an email <b>willowawaymarket@gmail.com</b> if you'd like to see a MacOS version in the future.
+Currently this script only tested in Windows 10. Not compatible for MacOS. Subject to change in the future. Send me an email <b>willowawaymarket@gmail.com</b><br>
+If you'd like to see a MacOS version in the future.
 
 # Contact me
 If you have any questions or want to get in contact you can email me at willowawaymarket@gmail.com or message me on social media's listed below<br>
-* Twitter: https://twitter.com/willow_away
-* Instagram: https://www.instagram.com/willow_away/
-* Reddit: https://www.reddit.com/user/WillowAwayArt
+* Twitter: https://twitter.com/willow_away<br>
+* Instagram: https://www.instagram.com/willow_away/<br>
+* Reddit: https://www.reddit.com/user/WillowAwayArt<br>
 
 # Thanks
 Please share, favorite, and leave a <b>star</b> on the repo.<br>
 If you found it useful, you can leave a tip. I would greatly appreciate the support. <br>
 Paypal: https://paypal.me/willowaway<br>
-Venmo: @Willow_Hughes
+Venmo: @Willow_Hughes<br>
 Wallet Address: <b>0xC2229aD79F60526CaD49629200584a81cC1B1b28</b><br>
 Thank you, I hope you find this tool useful. </p>
