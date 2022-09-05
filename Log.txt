@@ -1,0 +1,51 @@
+Starting Point This Page Needed To Be Refreshed 
+Starting Point This Page Needed To Be Refreshed 
+Starting Point This Page Needed To Be Refreshed 
+Total Retries : 0 :: Total Time : 0.008952599950134754
+Starting Point This Page Needed To Be Refreshed 
+Total Retries : 0 :: Total Time : 0.008977600140497088
+Total Retries : 0 :: Total Time : 0.008815099950879812
+Total Retries : 0 :: Total Time : 0.008882900001481175
+Total Retries : 0 :: Total Time : 0.008660599822178483
+Total Retries : 0 :: Total Time : 0.008634499972686172
+Total Retries : 0 :: Total Time : 0.006602299865335226
+Total Retries : 0 :: Total Time : 0.00874409987591207
+Total Retries : 0 :: Total Time : 0.0069929000455886126
+Total Retries : 0 :: Total Time : 0.00672499998472631
+Total Retries : 0 :: Total Time : 0.006669300142675638
+Total Retries : 0 :: Total Time : 0.008170199813321233
+Total Retries : 0 :: Total Time : 0.007116399938240647
+Total Retries : 0 :: Total Time : 0.0068159999791532755
+Total Retries : 0 :: Total Time : 0.006867400137707591
+Total Retries : 0 :: Total Time : 0.006914699915796518
+Total Retries : 0 :: Total Time : 0.008928699884563684
+Total Retries : 0 :: Total Time : 0.00683770002797246
+Total Retries : 0 :: Total Time : 0.010240199975669384
+Total Retries : 0 :: Total Time : 0.008701700018718839
+Total Retries : 0 :: Total Time : 0.007087099831551313
+Total Retries : 0 :: Total Time : 0.006631499854847789
+Total Retries : 0 :: Total Time : 0.006642199819907546
+Total Retries : 0 :: Total Time : 0.0088833998888731
+Total Retries : 0 :: Total Time : 0.009575000032782555
+Total Retries : 0 :: Total Time : 0.009808900067582726
+Total Retries : 0 :: Total Time : 0.009886499959975481
+Total Retries : 0 :: Total Time : 0.009573500137776136
+Total Retries : 0 :: Total Time : 0.009774599922820926
+Total Retries : 0 :: Total Time : 0.010794099885970354
+Total Retries : 0 :: Total Time : 0.00953290006145835
+Total Retries : 0 :: Total Time : 0.010630400152876973
+Total Retries : 0 :: Total Time : 0.010245699901133776
+Total Retries : 0 :: Total Time : 0.010030500125139952
+Total Retries : 0 :: Total Time : 0.009910099906846881
+Total Retries : 0 :: Total Time : 0.009956900030374527
+Total Retries : 1 :: Total Time : 3.389543999917805
+Total Retries : 1 :: Total Time : 3.3478133999742568
+Total Retries : 1 :: Total Time : 3.3522439000662416
+Total Retries : 1 :: Total Time : 3.346948399906978
+Total Retries : 1 :: Total Time : 3.367890299996361
+Total Retries : 1 :: Total Time : 3.268661600071937
+Total Retries : 1 :: Total Time : 3.384665400022641
+Total Retries : 1 :: Total Time : 3.280872300034389
+Total Retries : 1 :: Total Time : 3.2803049001377076
+Total Retries : 1 :: Total Time : 3.298333000158891
+Total Retries : 1 :: Total Time : 3.3730671999510378
