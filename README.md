@@ -1,4 +1,4 @@
-<img src="cover.png" width="750">
+![Cover photo](cover.jpg)
 
 # OpenSea Uploader
 A bulk uploader for uploading NFTs to OpenSea using Selenium, Excel, VBA, and Python.
