@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://github.com/will7hughes/OpenSeaUploader/blob/main/cover.jpg" />
-</p><br>
+</p>
 
 # OpenSea Uploader
 A bulk uploader for uploading NFTs to OpenSea using Selenium, Excel, VBA, and Python.
