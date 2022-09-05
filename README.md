@@ -29,7 +29,7 @@ Ethereum address: 0xd5146965809e4286e24dcf2bfbf58c3840d433a2<br>
 This script does not collect or scrape any information while it is running.<br>
 It is a good idea to look at the code yourself and understand the program before running it or modifying it.<br>
 We will not be liable for any losses and/or damages for using our script. <br>
-<b>Use at your own risk<b>
+<b>Use at your own risk</b>
   
 # Version Log
 <ul>
@@ -52,9 +52,9 @@ We will not be liable for any losses and/or damages for using our script. <br>
   <li>Once running the script, will pop-up the application </li>
   <li>Fill in the form for your project upload properties, </li>
   <ul>
-    <li>Opensea collection link: https://www.opensea.io/collection/yourcollectionsname/<B>assets/create</b></li>
+    <li>Opensea collection link: https://www.opensea.io/collection/yourcollectionsname/<b>assets/create</b></li>
     <li>Opensea collection link must end with "assets/create", <br>
-    look like this : https://www.opensea.io/collection/yourcollectionsname/<B>assets/create</b></li>
+    look like this : https://www.opensea.io/collection/yourcollectionsname/<b>assets/create</b></li>
     <li>Start number 1</li>
     <li>End number 9999 or any number</li>
     <li>Default price: 0.02 (Will only be used if you do not specify in the .json file)</li>
@@ -65,7 +65,7 @@ We will not be liable for any losses and/or damages for using our script. <br>
   <li>Double check your image / json format: 1.png or 1.json</li>
   <li>Double check your json format: Refer to sample json file in /references/sample.json</li>
   <li>If Polygon please tick "Polygon Blockchain</li>
-  <li>Please check "Complete Listing" for <b>listing for sale<b> OR unchecked "complete listing" for just creating the NFT</li>
+  <li>Please check "Complete Listing" for <b>listing for sale</b> OR unchecked "complete listing" for just creating the NFT</li>
   <li>Click and “Save this Form”</li>
   <li>Click “Open Chrome Browser” will popup a new chrome browser, Download metamask extension if haven't already.</li>
   <li>Login to your metamask account.</li>
@@ -97,9 +97,9 @@ If you have any questions or want to get in contact you can email me at willowaw
 * Reddit: https://www.reddit.com/user/WillowAwayArt
 
 # Thanks
-Please share, favorite, and leave a <b>star<b> on the repo.<br>
+Please share, favorite, and leave a <b>star</b> on the repo.<br>
 If you found it useful, you can leave a tip. I would greatly appreciate the support. <br>
 Paypal: https://paypal.me/willowaway<br>
 Venmo: @Willow_Hughes
-Wallet Address: <B>0xC2229aD79F60526CaD49629200584a81cC1B1b28</b><br>
+Wallet Address: <b>0xC2229aD79F60526CaD49629200584a81cC1B1b28</b><br>
 Thank you, I hope you find this tool useful. </p>
