@@ -83,6 +83,9 @@ Install the OpenSea Uploader Chrome Extension<br>
 
 ## Version Log
 <ul>
+  <li><b>Version 1.0.2</b><br>
+      Cleaned up code<br>
+  </li>
   <li><b>Version 1.0.1</b><br>
       Added form validation<br>
   </li>
