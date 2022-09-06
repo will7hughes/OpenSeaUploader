@@ -140,81 +140,174 @@ def check_exists_by_xpath(driver, xpath):
         return False
     return True
 
-class InputField:
-    def __init__(self, label, row_io, column_io, pos, txt_width=60, master=root):
+def warn(title, message):
+    messagebox.showwarning(title, message)
+    print("!Warning - " + title + " - " + message)
+
+def info(message):
+    messagebox.showwarning("Info", message)
+    print("!Info - " + message)
+
+def log(message, title="Log - "):
+    print(title + message)
+
+class InputEntry(tk.Entry):
+    def __init__(self, parent, input_type, **kwargs):
+        self.input_type = input_type
+        super().__init__(parent, **kwargs)
+
+    # Override the get
+    # Used for our custom type checking system in InputField.input_field, validate, on_invalid
+    # Tries to cast the value based on the input_type
+    # If it fails to cast, then it just returns the value without casting
+    # This way we can prompt the user that the Type is wrong without getting a bunch of ugly errors
+    def get(self):
+        try:
+            input_value = self.input_type(super().get())
+        except:
+            input_value = super().get()
+        return input_value
+
+class InputField():
+    def __init__(self, label, row_io, column_io, pos, min, max, input_type, invalid_message="Invalid Input Field", txt_width=60, master=root):
+        super().__init__()
+
         self.master = master
-        self.input_field = Entry(self.master, width=txt_width)
+
+        self.min = min
+        self.max = max
+        self.input_type = input_type        
+        self.invalid_message = invalid_message
+
+        # Valid/Invalid Commands
+        valid_command = (self.master.register(self.validate), '%P')
+        invalid_command = (self.master.register(self.on_invalid),)
+
+        self.input_field = InputEntry(self.master, self.input_type, width=txt_width)
+        self.input_field.config(validate='focusout', validatecommand=valid_command, invalidcommand=invalid_command)
         self.input_field.grid(ipady=3)
         self.input_field.label = Label(master, text=label, anchor="w", width=20, height=1 )
         self.input_field.label.grid(row=row_io, column=column_io, padx=12, pady=2)
-        self.input_field.grid(row=row_io, column=column_io + 1, padx=12, pady=2)
         
+        self.input_field.grid(row=row_io, column=column_io + 1, columnspan=2, padx=12, pady=2)
+
+        # self.label_error = Label(self, foreground='red')
+        # self.label_error.grid(row=row_io, column=column_io + 2, sticky=W, padx=5)
+
         try:
             with open(save_file_path(), "rb") as infile:
                 new_dict = pickle.load(infile)
                 self.insert_text(new_dict[pos])
         except FileNotFoundError:
+            info("!Exception: File Not Found", "InputField class __init__ threw an exception")
             pass
-        
+
     def insert_text(self, text):
         self.input_field.delete(0, "end")
         self.input_field.insert(0, text)
 
     def save_inputs(self, pos):
-        #messagebox.showwarning("showwarning", "Warning")
         input_save_list.insert(pos, self.input_field.get())
-        #print(self.input_field.get())
         with open(save_file_path(), "wb") as outfile:
             pickle.dump(input_save_list, outfile)
-            
-    def validate_inputs(self, maxlen, type, message):
+    
+    def show_message(self, message='', color='black'):
+        self.input_field['foreground'] = color
 
-        if type == 0 and (len(self.input_field.get()) == 0 or (self.input_field.get()).isdigit() != True or len(self.input_field.get()) > maxlen):
-            messagebox.showwarning("showwarning", message)
-                
-        elif type == 1 and (len(self.input_field.get()) == 0 or is_numeric(self.input_field.get()) == False or len(self.input_field.get()) >= maxlen):
-            messagebox.showwarning("showwarning", message)       
-                
-        elif type == 2 and ( len(self.input_field.get()) == 0 or len(self.input_field.get()) > maxlen):
-            messagebox.showwarning("showwarning", message)
-               
-        else:
-            return True     
+    def on_invalid(self):
+        on_invalid_message = "Invalid Input [ " + str(self.input_field.get()) + " ] " + self.invalid_message
+
+        if type(self.input_field.get()) != self.input_type:
+            on_invalid_message = on_invalid_message + " \n\tType should be ( " + str(self.input_type) + " ) \n\tInstead it was ( " + str(type(self.input_field.get())) + " )"
         
+        self.show_message(on_invalid_message, 'red')
+        log(on_invalid_message)
+        info(on_invalid_message)
+        return False
+
+    def validate(self, value):
+        try:
+            input_field_value = self.input_field.get()
+        except:
+            input_field_value = value
+
+        input_field_type = type(input_field_value)
+        if input_field_type is self.input_type:
+            if input_field_type is str and (input_field_value == 0 or (input_field_value).isdigit() == True or len(input_field_value) > self.max or len(input_field_value) < self.min):
+                return False
+            elif input_field_type is int and (input_field_value > self.max or input_field_value < self.min):
+                return False
+            elif input_field_type is float and (input_field_value > self.max or input_field_value < self.min):
+                return False
+            else:
+                # Resets the input text field to valid
+                self.show_message()
+                return True
+        else:
+            return False
 
 ###input objects###
-collection_link_input = InputField("OpenSea Collection Link:", 2, 0, 1)
-start_num_input = InputField("Start Number:", 3, 0, 2)
-end_num_input = InputField("End Number:", 4, 0, 3)
-price = InputField("Default Price:", 5, 0, 4)
-file_format = InputField("NFT Image Format:", 8, 0, 7)
-external_link = InputField("External link:", 9, 0, 8)
+# InputField(self, label, row_io, column_io, pos, min, max, input_type, invalid_message="Invalid Input Field", txt_width=60, master=root)
+collection_link_input = InputField("OpenSea Collection Link:", 2, 0, 1, 1, 200, str, 'Collection link required, check your format. Should start with https://opensea.io/collection/. Insert your collection name. Then should end in /assets/create. Example: https://opensea.io/collection/willow-away/assets/create')
+description_credit_input = InputField("Description Credit:", 3, 0, 2, 0, 100000, str, "Description Credit is invalid")
+description_footer_input = InputField("Description Footer:", 4, 0, 3, 0, 100000, str, "Description Footer is invalid")
+start_num_input = InputField("Start Number:", 5, 0, 4, 1, 1000, int, "Start Number should be a number between 1 and 999")
+end_num_input = InputField("End Number:", 6, 0, 5, 1, 3000, int, "End Number should be greater than Start Number and less than (Start Number) + 1000")
+price = InputField("Default Price:", 7, 0, 6, 0.001, 100, float, "Price required")
+file_format = InputField("NFT Image Format:", 8, 0, 7, 1, 100, str, "File format required - png, jpg, jpeg, gif")
+external_link = InputField("External link:", 9, 0, 8, 0, 300, str, "External link is not formatted correctly")
+
+def form_is_valid():
+    collection_link = collection_link_input.input_field.get()
+    cl_expected_start = "https://opensea.io/collection/"
+    cl_expected_end ="/assets/create"
+
+    cl_start_len = len(cl_expected_start)
+    cl_start = collection_link[0:cl_start_len]
+    
+    cl_end_len = len(cl_expected_end)
+    cl_end = collection_link[-cl_end_len:]
+
+    file_expected_end = "/src"
+    f_end_len = len("/src")
+    f_end = upload_path[-f_end_len:]
+
+    if end_num_input.input_field.get() <= start_num_input.input_field.get():
+        warn("Invalid Form", "Invalid Input \n\tEnd number [" + str(end_num_input.input_field.get()) + " ] " + "\nShould be less than \n\tStart number [ " + str(start_num_input.input_field.get()) + " ]")
+        return False
+    elif cl_start != cl_expected_start:
+        warn("Invalid Form", "Invalid Input \n\tCollection Link should Start with https://opensea.io/collection/{Insert your collection name}\n\tThen should end in /assets/create\nExample: https://opensea.io/collection/willow-away/assets/create")
+        return False
+    elif cl_end != cl_expected_end:
+        warn("Invalid Form", "Invalid Input \n\tCollection Link should End with /assets/create\nExample: https://opensea.io/collection/willow-away/assets/create")
+        return False
+    elif f_end != file_expected_end:
+        warn("Invalid Form", "Invalid Input \n\tSave Location should be in a directory ending in /src\nExample: C:Users/Willow/OpenSeaUploader/src")
+        return False
+    else:
+        return True
 
 def save():
+    if form_is_valid():
+        try:
+            input_save_list.insert(0, upload_path)
+            collection_link_input.save_inputs(1)
+            description_credit_input.save_inputs(2)
+            description_footer_input.save_inputs(3)
+            start_num_input.save_inputs(4)
+            end_num_input.save_inputs(5)
+            price.save_inputs(6)
+            file_format.save_inputs(7)
+            external_link.save_inputs(8)
+            #Total_Items.save_inputs(10)
+            #Control_Line_Number.save_inputs(11)
+            #Items_In_Line.save_inputs(12)
 
-    if len(start_num_input.input_field.get()) == 0 or len(end_num_input.input_field.get()) == 0 or (int(end_num_input.input_field.get()) < int(start_num_input.input_field.get())):
-        #messagebox.showwarning("showwarning", "End number should greater than start number!")
-        print ("true")
-    elif len( start_num_input.input_field.get()) == 0 or len(end_num_input.input_field.get()) > 5 :
-        #messagebox.showwarning("showwarning", "Start / end number range 0 - 99999")
-        print ("true")
+            info("Form Saved")
+        except:
+            warn("Failed to Save Form. Check the README.md for form information. Verify form is properly filled out. Check the console for the error.\n")
     else:
-        collection_link_input.validate_inputs(200, 2, 'Collection link required')
-        price.validate_inputs(100, 1, 'Price required')
-        file_format.validate_inputs(100, 2, 'file format required - png, jpg, jpeg, gif')
-        external_link.validate_inputs(300, 3, '')
-     
-
-    input_save_list.insert(0, upload_path)
-    collection_link_input.save_inputs(1)
-    start_num_input.save_inputs(2)
-    end_num_input.save_inputs(3)
-    price.save_inputs(4)
-    file_format.save_inputs(7)
-    external_link.save_inputs(8)
-    #Total_Items.save_inputs(10)
-    #Control_Line_Number.save_inputs(11)
-    #Items_In_Line.save_inputs(12)
+        log("Form is not valid. Check the README.md for form information. Verify form is properly filled out.")
 
 def main_program_loop(prgrm):
 
@@ -225,14 +318,14 @@ def main_program_loop(prgrm):
     project_path = main_directory
     file_path = upload_path
     collection_link = collection_link_input.input_field.get()
+    loop_description_credit = description_credit_input.input_field.get() #Digital art generated by DALL-E 2 using OpenAI.
+    loop_description_footer = description_footer_input.input_field.get() #Willow generated this image in part with GPT-3, OpenAI's large-scale language-generation model. Upon generating draft language, Willow reviewed, edited, and revised the language to their own liking and takes ultimate responsibility for the content of this publication.
     start_num = int(start_num_input.input_field.get())
     end_num = int(end_num_input.input_field.get())
     loop_price = float(price.input_field.get())
     listing_price = loop_price
     loop_file_format = file_format.input_field.get()
     loop_external_link = str(external_link.input_field.get())
-    loop_description_credit = "Digital art generated by DALL-E 2 using OpenAI."
-    loop_description_footer = "Willow generated this image in part with GPT-3, OpenAI's large-scale language-generation model. Upon generating draft language, Willow reviewed, edited, and revised the language to their own liking and takes ultimate responsibility for the content of this publication."
 
     ##chromeoptions
     options = webdriver.ChromeOptions()
