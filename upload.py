@@ -39,9 +39,11 @@ import timeit #HKN
 import re #HKN
 from functools import partial #HKN
 from functions.gui import root
+from functions.image_path import image_path
 from functions.info import info
 from functions.log import log
 from functions.warn import warn
+from functions.debug import debug
 from classes.WebImage import WebImage
 from functions.gui import json_path
 from functions.gui import collection_link_input, description_credit_input
@@ -91,11 +93,11 @@ def coffeeURL():
 
 def save_duration():
     duration_value.set(value=duration_value.get())
-    # print(duration_value.get())
+    # log(duration_value.get())
 
 def save_captcha():
     captcha_value.set(value=captcha_value.get())
-    #print(captcha_value.get())
+    #log(captcha_value.get())
 
 def open_chrome_profile():
     subprocess.Popen(
@@ -137,10 +139,10 @@ def collection_scraper():#HKN
     driver = webdriver.Chrome(executable_path=project_path + "/chromedriver.exe",options=options)
     wait = WebDriverWait(driver, 60)
     #driver.get(driver.current_url+"?search[sortAscending]=true&search[sortBy]=CREATED_DATE")# collection link
-    print("Wait 55 Seconds")
+    log("Wait 55 Seconds")
     #time.sleep(55)
     for sny in range(55):
-        print(str(55-sny))
+        log(str(55-sny))
         time.sleep(1)
 
     #wait = WebDriverWait(driver, 60)
@@ -150,7 +152,7 @@ def collection_scraper():#HKN
     my_divs = WebDriverWait(driver, 120).until(ExpectedConditions.presence_of_all_elements_located((By.XPATH, '//div[@role="gridcell" or @role="card"][contains(@style,"top")]')))
 
     for my_div in my_divs:
-        #print(my_div.value_of_css_property("top"))
+        #log(my_div.value_of_css_property("top"))
         top_list_item =int(my_div.value_of_css_property("top").replace("px", ""))
         if(top_list_item > 0):
             first_top_list.append(top_list_item)
@@ -163,7 +165,7 @@ def collection_scraper():#HKN
 
     next_nft = driver.find_element(By.XPATH, '//div[@role="gridcell"  or @role="card"][contains(@style,"top: '+ str(Top_value) +'px")]')
     driver.execute_script("arguments[0].scrollIntoView(true);",next_nft)
-    print("Wait 5 Seconds")
+    log("Wait 5 Seconds")
     time.sleep(5)
 
     #total_items=int(Total_Items.input_field.get()) #HKN
@@ -185,13 +187,13 @@ def collection_scraper():#HKN
         #presence_of_all_elements_located
         if my_line !=0 and my_line%50==0:
             for sny in range(60):
-                print(str(60-sny))
+                log(str(60-sny))
                 time.sleep(1)
 
         if my_line<(total_line-control_line-1):
             WebDriverWait(driver, 120).until(ExpectedConditions.visibility_of_all_elements_located((By.XPATH, '//div[@role="gridcell" or @role="card"][contains(@style,"top: '+ str(Top_value + find_min * control_line) +'px")][last()='+str(line_count)+']')))
         elif my_line == (total_line-control_line-1):
-            print("Wait  30 Seconds")
+            log("Wait  30 Seconds")
             time.sleep(30)
 
         last_string='[last()='+str(line_count)+']'
@@ -207,16 +209,16 @@ def collection_scraper():#HKN
                     #nft_Name = my_nft.find_element(By.XPATH, './/div[@class="AssetCardFooter--name"]').text
                     nft_Name = my_nft.find_element(By.XPATH, './/a//img').get_attribute('alt')
                     nft_Link = my_nft.find_element(By.XPATH, './/a').get_attribute('href')
-                    print(my_nft.find_element(By.XPATH, './/a').get_attribute('href'))
+                    log(my_nft.find_element(By.XPATH, './/a').get_attribute('href'))
                     with open(os.path.join(sys.path[0], "Scraper.txt"),  'a') as outputfile:  # Use file to refer to the file object
                         outputfile.write(nft_Name + "," + nft_Link + "\n")
                     wait_E = False
                 except:
-                    print("Nftnin bir bilgisi bulunamadı tekrar deneniyor")
+                    log("Nftnin bir bilgisi bulunamadı tekrar deneniyor")
                     wait_E = True
             
             #time.sleep(0.1)
-        print("My Line : " + str(my_line))
+        log("My Line : " + str(my_line))
         if (my_line + 1) != total_line:
             Top_value = Top_value + find_min
             WebDriverWait(driver, 120).until(ExpectedConditions.presence_of_element_located((By.XPATH, '//div[@role="gridcell" or @role="card"][contains(@style,"top: '+ str(Top_value) +'px")]')))
@@ -270,9 +272,7 @@ def form_is_valid():
     cl_end = collection_link[-cl_end_len:]
 
     file_expected_end = "/src"
-    f_end_len = len("/src")
-    file_path = json_path.get_path()
-    f_end = file_path[-f_end_len:]
+    f_end = json_path.get_end()
 
     if end_num_input.input_field.get() <= start_num_input.input_field.get():
         warn("Invalid Form", "Invalid Input \n\tEnd number [" + str(end_num_input.input_field.get()) + " ] " + "\nShould be less than \n\tStart number [ " + str(start_num_input.input_field.get()) + " ]")
@@ -307,7 +307,7 @@ def save():
 
             info("Form Saved")
         except:
-            warn("Failed to Save Form. Check the README.md for form information. Verify form is properly filled out. Check the console for the error.\n")
+            warn("Failed to Save Form", "Check the README.md for form information. Verify form is properly filled out. Check the console for the error.\n")
     else:
         log("Form is not valid. Check the README.md for form information. Verify form is properly filled out.")
 
@@ -318,31 +318,97 @@ def save():
 
 def main_program_loop(prgrm):
 
-    if len(end_num_input.input_field.get()) > 5 :
-        messagebox.showwarning("showwarning", "Start / end number range 0 - 99999")
-        sys.exit()
-
     project_path = main_directory
     file_path = json_path.get_path()
-    collection_link = collection_link_input.input_field.get()
-    loop_description_credit = description_credit_input.input_field.get() #Digital art generated by DALL-E 2 using OpenAI.
-    loop_description_footer = description_footer_input.input_field.get() #Willow generated this image in part with GPT-3, OpenAI's large-scale language-generation model. Upon generating draft language, Willow reviewed, edited, and revised the language to their own liking and takes ultimate responsibility for the content of this publication.
-    start_num = int(start_num_input.input_field.get())
-    end_num = int(end_num_input.input_field.get())
-    loop_price = float(price.input_field.get())
+    collection_link = collection_link_input.input_field.get() # https://opensea.io/collection/willow-away/assets/create
+    loop_description_credit = description_credit_input.input_field.get() # Digital art generated by DALL-E 2 using OpenAI.
+    loop_description_footer = description_footer_input.input_field.get() # Willow generated this image in part with GPT-3, OpenAI's large-scale language-generation model. Upon generating draft language, Willow reviewed, edited, and revised the language to their own liking and takes ultimate responsibility for the content of this publication.
+    start_num = start_num_input.input_field.get()
+    end_num = end_num_input.input_field.get()
+    loop_price = price.input_field.get()
     listing_price = loop_price
-    loop_file_format = file_format.input_field.get()
-    loop_external_link = str(external_link.input_field.get())
+    loop_file_format = file_format.input_field.get() # png, jpg, jpeg, gif
+    loop_external_link = external_link.input_field.get()
 
-    ##chromeoptions
+
+    sleeptime = random.uniform(0.8, 1.9) #HKN
+    sleeptime_short = random.uniform(0.4, 0.8)
+    sleeptime_mini = random.uniform(0.1, 0.2)
+    sleeptime_blip = random.uniform(0.05, 0.1)
+
+    def sleeptime():
+        time.sleep(random.uniform(0.8, 1.9))
+
+    def sleeptime_short():
+        time.sleep(random.uniform(0.4, 0.8))
+
+    def sleeptime_mini():
+        time.sleep(random.uniform(0.1, 0.2))
+
+    def sleeptime_blip():
+        time.sleep(random.uniform(0.05, 0.1))
+    
+    Lines = []
+    if is_listing.get() and prgrm == "OnlyListing":
+        with open(os.path.join(sys.path[0], "modified_Scraper.txt"),  'r') as scraped_list:  # Use file to refer to the file object
+            Lines = scraped_list.readlines()
+        if len(Lines) < 1:
+            messagebox.showwarning("showwarning", "No Collected Data Found")
+            return
+
+    if prgrm == "RenameImages":
+
+        images_folder = image_path()
+        basepath = os.path.dirname(__file__)
+
+        processed_image_count = 0
+        end_index = end_num - start_num
+        debug("end_index: " + str(end_index))
+        for existing_image_index, existing_filename in enumerate(os.listdir(images_folder)):
+            
+            debug("format, processed_image_count, existing: " + str(loop_file_format) + ", " + str(processed_image_count) + ", " + str(existing_image_index))
+
+            # Only process images within the Start/End Number
+            if processed_image_count < end_index:
+
+                new_image_path = f"{str(start_num)}.{loop_file_format}"
+                new_image_path = f"{images_folder}/{new_image_path}"
+                existing_image_path = os.path.abspath(os.path.join(basepath, "src", "images", existing_filename))
+
+                # Check if the existing image has an integer value as it's last character
+                start_to_last_char = len(loop_file_format)+2
+                end_to_last_char = len(loop_file_format)+1
+                debug("start_to_last_char, end_to_last_char: " + str(start_to_last_char) + ", " + str(end_to_last_char))
+                existing_image_last_char = existing_image_path[-start_to_last_char:-end_to_last_char]
+                last_char_is_int = False
+                try:
+                    int(existing_image_last_char)
+                    # Will throw if it fails to cast to int, the following code won't run if it is not able to cast to int
+                    last_char_is_int = True
+                except ValueError:
+                    pass
+                
+                debug("last_char_is_int, char " + str(last_char_is_int) + ", " + str(existing_image_last_char))
+                # Only rename image files that do NOT end in a number (that way we don't rename images already processed)
+                if last_char_is_int == False:
+                    try:
+                        os.rename(existing_image_path, new_image_path)
+                        processed_image_count = processed_image_count + 1
+                        log("Renamed: " + existing_image_path + "\nTo: " + new_image_path)
+                    except FileExistsError:
+                        warn("Failed to Rename Images", "[ " + existing_image_path + " ] to [ " + new_image_path + " ] Already Exists.\n\tCheck your Start/End Number.\nYou don't want to overwrite existing work.\n\tOtherwise, delete the existing file and re-run Rename Images")
+                        pass
+        log("Rename Images Complete\n")
+        return
+
+    # Chrome
     options = webdriver.ChromeOptions()
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_experimental_option("debuggerAddress", "localhost:8989")
     driver = webdriver.Chrome(executable_path=project_path + "/chromedriver.exe",options=options)
-    # driver = webdriver.Chrome( service=Service(project_path + "/chromedriver.exe"), options=opt )
     wait = WebDriverWait(driver, 60)
 
-    ###wait for methods
+    # Wait for methods
     def wait_css_selector(code):
         wait.until(
             ExpectedConditions.presence_of_element_located((By.CSS_SELECTOR, code))
@@ -371,32 +437,6 @@ def main_program_loop(prgrm):
     def delay(waiting_time=30):
             driver.implicitly_wait(waiting_time)
 
-    sleeptime = random.uniform(0.8, 1.9) #HKN
-    sleeptime_short = random.uniform(0.4, 0.8)
-    sleeptime_mini = random.uniform(0.1, 0.2)
-    sleeptime_blip = random.uniform(0.05, 0.1)
-
-    def sleeptime():
-        time.sleep(random.uniform(0.8, 1.9))
-
-    def sleeptime_short():
-        time.sleep(random.uniform(0.4, 0.8))
-
-    def sleeptime_mini():
-        time.sleep(random.uniform(0.1, 0.2))
-
-    def sleeptime_blip():
-        time.sleep(random.uniform(0.05, 0.1))
-    
-
-    Lines = []
-    if is_listing.get() and prgrm == "OnlyListing":
-        with open(os.path.join(sys.path[0], "modified_Scraper.txt"),  'r') as scraped_list:  # Use file to refer to the file object
-            Lines = scraped_list.readlines()
-        if len(Lines) < 1:
-            messagebox.showwarning("showwarning", "No Collected Data Found")
-            return
-
     while end_num >= start_num:
         if is_numformat.get():
             start_numformat = f"{ start_num:04}"
@@ -413,7 +453,7 @@ def main_program_loop(prgrm):
                     loop_price = splited_line[2].strip() #if a special price is entered for the selected nft
                 
                 listing_price = loop_price
-            print('Number : ',  start_numformat, "Start Listing NFT : " +  splited_line[0].strip())
+            log('Number : ',  start_numformat, "Start Listing NFT : " +  splited_line[0].strip())
             listing_item_name = splited_line[0].strip()
             time.sleep(random.uniform(0.1, 0.5))
             driver.get(splited_line[1].strip())
@@ -431,7 +471,7 @@ def main_program_loop(prgrm):
                     WebDriverWait(driver, 20).until(ExpectedConditions.presence_of_element_located((By.CSS_SELECTOR, "button[aria-label='Add properties']" )))
                     wait_E = False
                 except:
-                    print("Refresh")
+                    log("Refresh")
                     with open(os.path.join(sys.path[0], "Log.txt"),  'a') as outputfile:  # Use file to refer to the file object
                         outputfile.write("Starting Point This Page Needed To Be Refreshed \n")
                     driver.get(collection_link)
@@ -450,8 +490,8 @@ def main_program_loop(prgrm):
                 # checks if file exists
                 jsonData = json.loads(open(file_path + "\\json\\"+ str(start_numformat) + ".json").read())
 
-                print("\n" + str(start_numformat) + " - Creating NFT")
-                print("--Name")
+                log("\n" + str(start_numformat) + " - Creating NFT")
+                log("--Name")
                 
                 name = driver.find_element(By.XPATH, '//*[@id="name"]')
                 sleeptime()
@@ -476,9 +516,9 @@ def main_program_loop(prgrm):
                                 name = driver.find_element(By.XPATH, '//*[@id="name"]')
                                 nft_title = jsonData["name"]
                                 name.send_keys(nft_title)
-                                print(nft_title)
+                                log(nft_title)
                             else:
-                                print("Name not found in json file")
+                                log("Name not found in json file")
                                 exit()
 
                             time.sleep(3)
@@ -505,7 +545,7 @@ def main_program_loop(prgrm):
                 ext_link.send_keys(loop_external_link)
                 sleeptime_mini()
 
-                print("--Description")
+                log("--Description")
                 if "description" in jsonData:
                     desc = driver.find_element(By.XPATH, '//*[@id="description"]')
                     nft_description = jsonData["description"]
@@ -521,16 +561,16 @@ def main_program_loop(prgrm):
                     sleeptime_mini()
                     desc.send_keys(loop_description_footer)
                     sleeptime()
-                    print(nft_description)
+                    log(nft_description)
                 
-                #print(str(jsonMetaData))
+                #log(str(jsonMetaData))
                 wait_css_selector("button[aria-label='Add properties']")
                 properties = driver.find_element(By.CSS_SELECTOR, "button[aria-label='Add properties']")
                 driver.execute_script("arguments[0].click();", properties)
                 sleeptime()
 
                 if "traits" in jsonData:
-                    print("--Traits")
+                    log("--Traits")
                     jsonMetaData = jsonData['traits']
 
                     for key in jsonMetaData:
@@ -541,7 +581,7 @@ def main_program_loop(prgrm):
                         input1.send_keys(trait_type)
                         sleeptime_blip()
                         input2.send_keys(trait_value)
-                        print(trait_type + ": " + trait_value)
+                        log(trait_type + ": " + trait_value)
                         addmore_button = driver.find_element(By.XPATH, '//button[text()="Add more"]')
                         driver.execute_script("arguments[0].click();", addmore_button)
                         sleeptime_mini()
@@ -555,11 +595,11 @@ def main_program_loop(prgrm):
                         driver.find_element(By.XPATH, '//button[text()="Save"]').click()
                         sleeptime()
                 else:
-                    print("Traits not found")
+                    log("Traits not found")
                     exit()
 
                 if "levels" in jsonData:
-                    print("-Levels")
+                    log("-Levels")
                     jsonMetaData = jsonData['levels']
                 
                     wait_css_selector("button[aria-label='Add levels']")
@@ -577,17 +617,17 @@ def main_program_loop(prgrm):
                         # Set max value 10 for Rank
                         for y in range(4):
                             input3.send_keys(Keys.ARROW_DOWN)
-                            # print("ARROW_DOWN")
+                            # log("ARROW_DOWN")
                             sleeptime_blip()
                         input3.send_keys(0)
                         sleeptime_mini()
 
                         # Set value
                         value1 = int(key["value"])
-                        print("Rank: " + str(value1))
+                        log("Rank: " + str(value1))
                         for x in range(3, value1):
                             input2.send_keys(Keys.ARROW_UP)
-                            # print("ARROW_UP")
+                            # log("ARROW_UP")
                             time.sleep(0.2)
                         sleeptime()
 
@@ -603,10 +643,10 @@ def main_program_loop(prgrm):
                         driver.find_element(By.XPATH, '//button[text()="Save"]').click()
                         sleeptime()
                 else:
-                    print("Levels not found!") 
+                    log("Levels not found!") 
             
                 if "stats" in jsonData:
-                    print("-Stats")
+                    log("-Stats")
                     jsonMetaData = jsonData['stats']
                 
                     wait_css_selector("button[aria-label='Add stats']")
@@ -625,7 +665,7 @@ def main_program_loop(prgrm):
                         max_value = int(key["max_value"])
                         for y in range(4):
                             input3.send_keys(Keys.ARROW_DOWN)
-                            # print("ARROW_DOWN")
+                            # log("ARROW_DOWN")
                             sleeptime_blip()
                         sleeptime()
                         input3.send_keys(0)
@@ -636,17 +676,17 @@ def main_program_loop(prgrm):
                         sleeptime_short()
 
                         value1 = int(key["value"])            
-                        print("Collection: " + str(value1))
+                        log("Collection: " + str(value1))
 
                         for x in range(3):
                             input2.send_keys(Keys.ARROW_DOWN)
-                            # print("ARROW_DOWN")
+                            # log("ARROW_DOWN")
                             sleeptime_blip()
                         sleeptime()
 
                         for x in range(value1):
                             input2.send_keys(Keys.ARROW_UP)
-                            # print("ARROW_UP")
+                            # log("ARROW_UP")
                             sleeptime_blip()
 
                         #addmore_button = driver.find_element(By.XPATH, '//button[text()="Add more"]')
@@ -661,26 +701,26 @@ def main_program_loop(prgrm):
                         driver.find_element(By.XPATH, '//button[text()="Save"]').click()
                         sleeptime()
                 else:
-                    print("Levels not found!") 
+                    log("Levels not found!") 
                 
                 if is_listing.get():
                     if "price" in jsonData:
                         listing_price_int = jsonData["price"]
                         if listing_price_int > 2 or listing_price_int < 0.01:
-                            print("Warning - Listing price should be between 2 and 0.01. Change your price in the json file or edit the code")
+                            log("Warning - Listing price should be between 2 and 0.01. Change your price in the json file or edit the code")
                             is_listing.set(False)
                             listing_price = loop_price #Setting to default, just in case
                         listing_price = str(listing_price_int)
                     else:
-                        print("Warning - Cannot list item without a price defined in the json file")
+                        log("Warning - Cannot list item without a price defined in the json file")
                         is_listing.set(False)
                         listing_price = loop_price #Setting to default, just in case
 
             # Select Polygon blockchain if applicable
             if is_polygon.get():
-                print("Polygon")
+                log("Polygon")
             else:
-                print("Ethereum")
+                log("Ethereum")
                 try:
                     wait_xpath('//*[@id="chain"]')
                     default_blockchain = driver.find_element(By.ID, "chain").get_attribute("value")
@@ -688,7 +728,7 @@ def main_program_loop(prgrm):
                     blockchain_dropdown.click()
                     sleeptime_mini()
                 except:
-                    print("Failed to click blockchain dropdown")
+                    log("Failed to click blockchain dropdown")
                     exit()
                 
                 try:
@@ -697,13 +737,13 @@ def main_program_loop(prgrm):
                     driver.execute_script("arguments[0].click();", eth_button)
                     sleeptime()
                 except:
-                    print("Struggled to select Ethereum")
+                    log("Struggled to select Ethereum")
                     try:
                         eth_button = driver.find_element(By.XPATH, "//span[.='Ethereum']")
                         driver.execute_script("arguments[0].click();", eth_button)
                         sleeptime()
                     except:
-                        print("Failed to select Ethereum")
+                        log("Failed to select Ethereum")
                         exit()
             
             # delay()
@@ -719,7 +759,7 @@ def main_program_loop(prgrm):
                     WebDriverWait(driver, 15).until(ExpectedConditions.presence_of_element_located((By.XPATH, '//h4[text()="Almost done"]' )))
                     wait_E = False
                 except:
-                    print("Click Again")
+                    log("Click Again")
                     driver.execute_script("arguments[0].click();", create)
                     wait_E = True    
             #HKN F
@@ -727,12 +767,12 @@ def main_program_loop(prgrm):
             main_page = driver.current_window_handle
 
             if check_exists_by_xpath(driver, '//h4[text()="Almost done"]'):
-                print("Solving Captcha. I am not a robot ;)")
+                log("Solving Captcha. I am not a robot ;)")
                 wait_xpath('//h4[text()="Almost done"]')
                 captcha_element = driver.find_element(By.XPATH,'//h4[text()="Almost done"]')
 
                 if check_exists_by_tagname('iframe'):
-                    # print("have iframe")
+                    # log("have iframe")
 
                     captcha_solver = captcha_value.get()
 
@@ -740,15 +780,15 @@ def main_program_loop(prgrm):
                         delay()
                         solved_info = WebDriverWait(driver, 300).until(ExpectedConditions.presence_of_element_located((By.XPATH, "//*[@class='captcha-solver-info']" )))#HKN
                         # solved_status = WebDriverWait(driver, 10).until(ExpectedConditions.presence_of_element_located((By.XPATH, "//*[@class='captcha-solver-info']" ))).get_attribute("innerHTML")
-                        # print(str(solved_status))
+                        # log(str(solved_status))
                         wait_xpath("//div[@class='captcha-solver']")
                         captcha_solver_button = driver.find_element(By.XPATH, "//div[@class='captcha-solver']")
                         driver.execute_script("arguments[0].click();", captcha_solver_button)
                         sleeptime()
                         WebDriverWait(driver, 300).until(ExpectedConditions.presence_of_element_located((By.XPATH, "//*[@data-state='solving']" )))#HKN
-                        print("solving")
+                        log("solving")
                         #WebDriverWait(driver, 300).until(ExpectedConditions.presence_of_element_located((By.XPATH, "//*[@data-state='solved']")))#HKN
-                        #print("solved")#HKN
+                        #log("solved")#HKN
                     
                     elif captcha_solver == "buster": # !!! Buster Captcha
 
@@ -788,7 +828,7 @@ def main_program_loop(prgrm):
 
                     
             else:
-                print("No Captcha to solve. Phew, that was close ;)")
+                log("No Captcha to solve. Phew, that was close ;)")
 
             try:
                 WebDriverWait(driver, 360).until(ExpectedConditions.presence_of_element_located((By.XPATH, '//a[text()="Sell"] | /html/body/div[6]/div/div/div/div[2]/button/i | //div[@class="item--collection-detail"]')))
@@ -796,7 +836,7 @@ def main_program_loop(prgrm):
             except:
                 if "https://opensea.io/assets" in str(driver.current_url):
                     #driver.get(driver.current_url)
-                    print("Assets page refreshed")
+                    log("Assets page refreshed")
                     driver.refresh()
                     time.sleep(5)
 
@@ -809,7 +849,7 @@ def main_program_loop(prgrm):
                 except:
                     if "https://opensea.io/assets" in str(driver.current_url):
                         #driver.get(driver.current_url)
-                        print("Assets page refreshed 222")
+                        log("Assets page refreshed 222")
                         with open(os.path.join(sys.path[0], "Log.txt"),  'a') as outputfile:  # Use file to refer to the file object
                             outputfile.write("This Page Needed To Be Refreshed for assets page refreshed 222 \n")
                         driver.refresh()
@@ -822,12 +862,12 @@ def main_program_loop(prgrm):
                 outputfile.write(nft_title + str(start_numformat) + "," + driver.current_url + "\n")
             #HKN Bitiş
 
-        print(str(start_numformat) + " - NFT Created: " +  nft_title + "\n")
+        log(str(start_numformat) + " - NFT Created: " +  nft_title + "\n")
 
         #LISTING START - listing start
         main_page = driver.current_window_handle
         if is_listing.get():
-            print(str(start_numformat) + " - Listing NFT: " +  nft_title)
+            log(str(start_numformat) + " - Listing NFT: " +  nft_title)
             time.sleep(2)
             try:
                 wait_xpath('//a[text()="Sell"]')
@@ -846,10 +886,10 @@ def main_program_loop(prgrm):
             amount.send_keys(str(listing_price))
             sleeptime()
 
-            print("--Duration")
+            log("--Duration")
             #duration
             duration_date = duration_value.get()
-            #print(duration_date)
+            #log(duration_date)
             
             #if duration_date != 30:
             amount.send_keys(Keys.TAB)
@@ -860,22 +900,22 @@ def main_program_loop(prgrm):
             select_durationday.click()
             if duration_date == 1 : 
                 range_button_location = '//span[normalize-space() = "1 day"]'
-                print("1 day")
+                log("1 day")
             if duration_date == 3 : 
                 range_button_location = '//span[normalize-space() = "3 days"]'
-                print("3 days")
+                log("3 days")
             if duration_date == 7 : 
                 range_button_location = '//span[normalize-space() = "7 days"]'
-                print("7 days")
+                log("7 days")
             if duration_date == 30 : 
                 range_button_location = '//span[normalize-space() = "1 month"]'    
-                print("1 month")
+                log("1 month")
             if duration_date == 90 : 
                 range_button_location = '//span[normalize-space() = "3 months"]' 
-                print("3 months")
+                log("3 months")
             if duration_date == 180 : 
                 range_button_location = '//span[normalize-space() = "6 months"]'
-                print("6 months")
+                log("6 months")
 
             wait.until(ExpectedConditions.presence_of_element_located(
                 (By.XPATH, range_button_location)))
@@ -884,7 +924,7 @@ def main_program_loop(prgrm):
             ethereum_button.click()
             sleeptime()# dikkat
             select_durationday.send_keys(Keys.ENTER)
-            print("Ethereum")
+            log("Ethereum")
             sleeptime()
 
             delay()
@@ -932,12 +972,12 @@ def main_program_loop(prgrm):
                             listing = driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
                             driver.execute_script("arguments[0].click();", listing)
                         except:
-                            print("i can't click")
+                            log("i can't click")
                     attempts_n = attempts_n + 1
                                   
             #HKN F
             
-            print("--Sign")
+            log("--Sign")
             if is_polygon.get():
                 try:
                     driver.find_element(By.XPATH, "//*[@id='app-content']/div/div[2]/div/div[3]/div[1]").click()

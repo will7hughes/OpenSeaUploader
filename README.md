@@ -83,6 +83,9 @@ Install the OpenSea Uploader Chrome Extension<br>
 
 ## Version Log
 <ul>
+  <li><b>Version 1.0.4</b><br>
+      Added Rename Images<br>
+  </li>
   <li><b>Version 1.0.3</b><br>
       Added executible<br>
   </li>
@@ -96,6 +99,13 @@ Install the OpenSea Uploader Chrome Extension<br>
       Initial version. Upload your preconfigured img and json files in the src directory.<br>
   </li>
 </ul>
+
+# Developer Notes
+Build executible (will go to dist/upload/upload.exe)<br>
+```python -m PyInstaller --noconfirm upload.py```<br><br>
+
+Run with the following command to debug if it opens and closes quickly (crashes). Otherwise, just double click the upload.exe<br>
+```.\dist\upload\upload.exe```<br>
 
 # Message for a MacOS user
 Currently this script only tested in Windows 10. Not compatible for MacOS. Subject to change in the future. Send me an email <b>willowawaymarket@gmail.com</b>
