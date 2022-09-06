@@ -980,13 +980,14 @@ def main_program_loop(prgrm):
         driver.switch_to.window(main_page)
         sleeptime()
         
-        print(str(start_numformat) + " - NFT Listed: " +  nft_title + "\n")
+        log(str(start_numformat) + " - NFT Listed: " +  nft_title + "\n")
 
         start_num = start_num + 1
         sleeptime()
         sleeptime_short()
     
     driver.get("https://www.opensea.io")
+    info("Upload Complete")
 
 
   
