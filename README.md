@@ -83,7 +83,10 @@ Install the OpenSea Uploader Chrome Extension<br>
 
 ## Version Log
 <ul>
-  <li><b>Version 1.0.0 (upload.py)</b><br>
+  <li><b>Version 1.0.1</b><br>
+      Added form validation<br>
+  </li>
+  <li><b>Version 1.0.0</b><br>
       Initial version. Upload your preconfigured img and json files in the src directory.<br>
   </li>
 </ul>
