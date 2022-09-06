@@ -37,7 +37,6 @@ class InputField():
                 new_dict = pickle.load(infile)
                 self.insert_text(new_dict[pos])
         except FileNotFoundError:
-            info("!Exception: File Not Found", "InputField class __init__ threw an exception")
             pass
 
     def insert_text(self, text):
@@ -61,7 +60,7 @@ class InputField():
         
         self.show_message(on_invalid_message, 'red')
         log(on_invalid_message)
-        info(on_invalid_message)
+        warn("", on_invalid_message)
         return False
 
     def validate(self, value):
