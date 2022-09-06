@@ -38,42 +38,28 @@ import random
 import timeit #HKN
 import re #HKN
 from functools import partial #HKN
+from functions.gui import root
+from functions.info import info
+from functions.log import log
+from functions.warn import warn
+from classes.WebImage import WebImage
+from functions.gui import json_path
+from functions.gui import collection_link_input, description_credit_input
+from functions.gui import description_footer_input, start_num_input, end_num_input, price
+from functions.gui import file_format, external_link
+from classes.InputField import input_save_list
 
+##--START--######################################-----GLOBAL-----#####################################--START--##
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
-#check local date format
+# Local Date Format
 locale.setlocale(locale.LC_ALL, '')
 lastdate = date(date.today().year, 12, 31)
-
-root = Tk()
-root.geometry('750x850')
-root.resizable(False, False)
-root.title("NFT Uploader")
   
-input_save_list = ["NFTs folder :", 0, 0, 0, 0, 0, 0, 0, 0, 0]
 main_directory = os.path.join(sys.path[0])
 
-
-def supportURL():
-    webbrowser.open_new("https://www.infotrex.net/opensea/support.asp?r=app")
-
-def coffeeURL():
-    webbrowser.open_new("https://github.com/infotrex/bulk-upload-to-opensea/#thanks")
-
-
-class WebImage:
-    def __init__(self, url):
-        with urllib.request.urlopen(url) as u:
-            raw_data = u.read()
-        #self.image = tk.PhotoImage(data=base64.encodebytes(raw_data))
-        image = Image.open(io.BytesIO(raw_data))
-        self.image = ImageTk.PhotoImage(image)
-
-    def get(self):
-        return self.image
-
-        
+# Header
 imageurl = "https://cdn.shopify.com/s/files/1/0610/4868/4682/files/cover_uploader.jpg?v=1662277776"
 img = WebImage(imageurl).get()
 imagelab = tk.Label(root, image=img)
@@ -92,9 +78,21 @@ is_numformat.set(False)
 is_sensitivecontent = BooleanVar()
 is_sensitivecontent.set(False) 
 
+##---END---######################################-----GLOBAL-----#####################################---END---##
+
+
+##--START--######################################----UTILITY-----#####################################--START--##
+
+def supportURL():
+    webbrowser.open_new("https://www.infotrex.net/opensea/support.asp?r=app")
+
+def coffeeURL():
+    webbrowser.open_new("https://github.com/infotrex/bulk-upload-to-opensea/#thanks")
+
 def save_duration():
     duration_value.set(value=duration_value.get())
     # print(duration_value.get())
+
 def save_captcha():
     captcha_value.set(value=captcha_value.get())
     #print(captcha_value.get())
@@ -109,20 +107,6 @@ def open_chrome_profile():
         ],
         shell=True,
     )
-
-
-def save_file_path():
-    return os.path.join(sys.path[0], "Save_gui.cloud") 
-
-
-# ask for directory on clicking button, changes button name.
-def upload_folder_input():
-    global upload_path
-    upload_path = filedialog.askdirectory()
-    Name_change_img_folder_button(upload_path)
-
-def Name_change_img_folder_button(upload_folder_input):
-    upload_folder_input_button["text"] = upload_folder_input
 
 def is_numeric(val):
 	if str(val).isdigit():
@@ -140,122 +124,139 @@ def check_exists_by_xpath(driver, xpath):
         return False
     return True
 
-def warn(title, message):
-    messagebox.showwarning(title, message)
-    print("!Warning - " + title + " - " + message)
-
-def info(message):
-    messagebox.showwarning("Info", message)
-    print("!Info - " + message)
-
-def log(message, title="Log - "):
-    print(title + message)
-
-class InputEntry(tk.Entry):
-    def __init__(self, parent, input_type, **kwargs):
-        self.input_type = input_type
-        super().__init__(parent, **kwargs)
-
-    # Override the get
-    # Used for our custom type checking system in InputField.input_field, validate, on_invalid
-    # Tries to cast the value based on the input_type
-    # If it fails to cast, then it just returns the value without casting
-    # This way we can prompt the user that the Type is wrong without getting a bunch of ugly errors
-    def get(self):
-        try:
-            input_value = self.input_type(super().get())
-        except:
-            input_value = super().get()
-        return input_value
-
-class InputField():
-    def __init__(self, label, row_io, column_io, pos, min, max, input_type, invalid_message="Invalid Input Field", txt_width=60, master=root):
-        super().__init__()
-
-        self.master = master
-
-        self.min = min
-        self.max = max
-        self.input_type = input_type        
-        self.invalid_message = invalid_message
-
-        # Valid/Invalid Commands
-        valid_command = (self.master.register(self.validate), '%P')
-        invalid_command = (self.master.register(self.on_invalid),)
-
-        self.input_field = InputEntry(self.master, self.input_type, width=txt_width)
-        self.input_field.config(validate='focusout', validatecommand=valid_command, invalidcommand=invalid_command)
-        self.input_field.grid(ipady=3)
-        self.input_field.label = Label(master, text=label, anchor="w", width=20, height=1 )
-        self.input_field.label.grid(row=row_io, column=column_io, padx=12, pady=2)
-        
-        self.input_field.grid(row=row_io, column=column_io + 1, columnspan=2, padx=12, pady=2)
-
-        # self.label_error = Label(self, foreground='red')
-        # self.label_error.grid(row=row_io, column=column_io + 2, sticky=W, padx=5)
-
-        try:
-            with open(save_file_path(), "rb") as infile:
-                new_dict = pickle.load(infile)
-                self.insert_text(new_dict[pos])
-        except FileNotFoundError:
-            info("!Exception: File Not Found", "InputField class __init__ threw an exception")
-            pass
-
-    def insert_text(self, text):
-        self.input_field.delete(0, "end")
-        self.input_field.insert(0, text)
-
-    def save_inputs(self, pos):
-        input_save_list.insert(pos, self.input_field.get())
-        with open(save_file_path(), "wb") as outfile:
-            pickle.dump(input_save_list, outfile)
+def collection_scraper():#HKN
     
-    def show_message(self, message='', color='black'):
-        self.input_field['foreground'] = color
+    collection_links=[]
+    first_top_list=[]
+    line_count=0
 
-    def on_invalid(self):
-        on_invalid_message = "Invalid Input [ " + str(self.input_field.get()) + " ] " + self.invalid_message
+    project_path = main_directory
+    options = webdriver.ChromeOptions()
+    options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_experimental_option("debuggerAddress", "localhost:8989")
+    driver = webdriver.Chrome(executable_path=project_path + "/chromedriver.exe",options=options)
+    wait = WebDriverWait(driver, 60)
+    #driver.get(driver.current_url+"?search[sortAscending]=true&search[sortBy]=CREATED_DATE")# collection link
+    print("Wait 55 Seconds")
+    #time.sleep(55)
+    for sny in range(55):
+        print(str(55-sny))
+        time.sleep(1)
 
-        if type(self.input_field.get()) != self.input_type:
-            on_invalid_message = on_invalid_message + " \n\tType should be ( " + str(self.input_type) + " ) \n\tInstead it was ( " + str(type(self.input_field.get())) + " )"
+    #wait = WebDriverWait(driver, 60)
+    def wait_xpath(code):
+        wait.until(ExpectedConditions.presence_of_element_located((By.XPATH, code)))
+
+    my_divs = WebDriverWait(driver, 120).until(ExpectedConditions.presence_of_all_elements_located((By.XPATH, '//div[@role="gridcell" or @role="card"][contains(@style,"top")]')))
+
+    for my_div in my_divs:
+        #print(my_div.value_of_css_property("top"))
+        top_list_item =int(my_div.value_of_css_property("top").replace("px", ""))
+        if(top_list_item > 0):
+            first_top_list.append(top_list_item)
+        elif(top_list_item == 0):
+            line_count = line_count + 1
+
+    find_min = min(first_top_list)
+    control_line = len(set(first_top_list))-1
+    Top_value = 0
+
+    next_nft = driver.find_element(By.XPATH, '//div[@role="gridcell"  or @role="card"][contains(@style,"top: '+ str(Top_value) +'px")]')
+    driver.execute_script("arguments[0].scrollIntoView(true);",next_nft)
+    print("Wait 5 Seconds")
+    time.sleep(5)
+
+    #total_items=int(Total_Items.input_field.get()) #HKN
+    #collection_count_text = driver.find_element(By.XPATH, '//div[@class="AssetSearchView--results-count"]/p').text
+    collection_count_text = driver.find_element(By.XPATH, '//div[@class="AssetSearchView--results collection--results AssetSearchView--results--phoenix"]//p').text
+    c_num = ""
+    for c in collection_count_text:
+        if c.isdigit():
+            c_num = c_num + c
+    total_items = int(c_num)
+
+    total_line =3
+    if int(total_items/line_count) != (total_items/line_count):
+        total_line = int(total_items/line_count) +1
+    else:
+        total_line = total_items/line_count
+
+    for my_line in range(total_line):#total_line or some integer like 20
+        #presence_of_all_elements_located
+        if my_line !=0 and my_line%50==0:
+            for sny in range(60):
+                print(str(60-sny))
+                time.sleep(1)
+
+        if my_line<(total_line-control_line-1):
+            WebDriverWait(driver, 120).until(ExpectedConditions.visibility_of_all_elements_located((By.XPATH, '//div[@role="gridcell" or @role="card"][contains(@style,"top: '+ str(Top_value + find_min * control_line) +'px")][last()='+str(line_count)+']')))
+        elif my_line == (total_line-control_line-1):
+            print("Wait  30 Seconds")
+            time.sleep(30)
+
+        last_string='[last()='+str(line_count)+']'
+        if (my_line + 1) == total_line:
+            last_string =""
+        nftler = WebDriverWait(driver, 120).until(ExpectedConditions.visibility_of_all_elements_located((By.XPATH, '//div[@role="gridcell" or @role="card"][contains(@style,"top: '+ str(Top_value) +'px")]'+ last_string)))
+        for my_nft in nftler:
+            #for sayi in range(5):
+                #WebDriverWait(driver, 120).until(ExpectedConditions.visibility_of_all_elements_located((By.XPATH, '//div[@role="gridcell" or @role="card"][contains(@style,"top: '+ str(Top_value) +'px")]['+str(sayi+1)+']//div[@class="AssetCardFooter--name"][string-length(text()) > 0]' )))
+            wait_E = True
+            while wait_E:
+                try:
+                    #nft_Name = my_nft.find_element(By.XPATH, './/div[@class="AssetCardFooter--name"]').text
+                    nft_Name = my_nft.find_element(By.XPATH, './/a//img').get_attribute('alt')
+                    nft_Link = my_nft.find_element(By.XPATH, './/a').get_attribute('href')
+                    print(my_nft.find_element(By.XPATH, './/a').get_attribute('href'))
+                    with open(os.path.join(sys.path[0], "Scraper.txt"),  'a') as outputfile:  # Use file to refer to the file object
+                        outputfile.write(nft_Name + "," + nft_Link + "\n")
+                    wait_E = False
+                except:
+                    print("Nftnin bir bilgisi bulunamadı tekrar deneniyor")
+                    wait_E = True
+            
+            #time.sleep(0.1)
+        print("My Line : " + str(my_line))
+        if (my_line + 1) != total_line:
+            Top_value = Top_value + find_min
+            WebDriverWait(driver, 120).until(ExpectedConditions.presence_of_element_located((By.XPATH, '//div[@role="gridcell" or @role="card"][contains(@style,"top: '+ str(Top_value) +'px")]')))
+            next_nft = driver.find_element(By.XPATH, '//div[@role="gridcell" or @role="card"][contains(@style,"top: '+ str(Top_value) +'px")]')
+            driver.execute_script("arguments[0].scrollIntoView(true); window.scrollBy(0,60);",next_nft) 
+        #time.sleep(2)
         
-        self.show_message(on_invalid_message, 'red')
-        log(on_invalid_message)
-        info(on_invalid_message)
-        return False
+        #driver.execute_script('element = document.body.querySelector("style[top="'+ str(Top_value) +'px"]"); element.scrollIntoView();')
 
-    def validate(self, value):
-        try:
-            input_field_value = self.input_field.get()
-        except:
-            input_field_value = value
+        #my_script = """myInterval = setInterval(function() {document.documentElement.scrollTop +="""+str(Top_value/4)+""";}, 500);
+        #setTimeout(function() {clearInterval(myInterval)}, 2000);
+        #"""
+        #driver.execute_script(my_script)
+        #driver.execute_script('document.documentElement.scrollTop +='+ str(Top_value))
+        #time.sleep(10)
 
-        input_field_type = type(input_field_value)
-        if input_field_type is self.input_type:
-            if input_field_type is str and (input_field_value == 0 or (input_field_value).isdigit() == True or len(input_field_value) > self.max or len(input_field_value) < self.min):
-                return False
-            elif input_field_type is int and (input_field_value > self.max or input_field_value < self.min):
-                return False
-            elif input_field_type is float and (input_field_value > self.max or input_field_value < self.min):
-                return False
-            else:
-                # Resets the input text field to valid
-                self.show_message()
-                return True
-        else:
-            return False
-
-###input objects###
-# InputField(self, label, row_io, column_io, pos, min, max, input_type, invalid_message="Invalid Input Field", txt_width=60, master=root)
-collection_link_input = InputField("OpenSea Collection Link:", 2, 0, 1, 1, 200, str, 'Collection link required, check your format. Should start with https://opensea.io/collection/. Insert your collection name. Then should end in /assets/create. Example: https://opensea.io/collection/willow-away/assets/create')
-description_credit_input = InputField("Description Credit:", 3, 0, 2, 0, 100000, str, "Description Credit is invalid")
-description_footer_input = InputField("Description Footer:", 4, 0, 3, 0, 100000, str, "Description Footer is invalid")
-start_num_input = InputField("Start Number:", 5, 0, 4, 1, 1000, int, "Start Number should be a number between 1 and 999")
-end_num_input = InputField("End Number:", 6, 0, 5, 1, 3000, int, "End Number should be greater than Start Number and less than (Start Number) + 1000")
-price = InputField("Default Price:", 7, 0, 6, 0.001, 100, float, "Price required")
-file_format = InputField("NFT Image Format:", 8, 0, 7, 1, 100, str, "File format required - png, jpg, jpeg, gif")
-external_link = InputField("External link:", 9, 0, 8, 0, 300, str, "External link is not formatted correctly")
+def remove_duplicates(liste):
+    liste2 = []
+    if liste: 
+        for item in liste:
+            if item not in liste2:
+                liste2.append(item)
+    else:
+        return liste
+    return liste2
+   
+def modify_Scrape_txt():#HKN
+    
+    def num_sort(test_string):
+        return list(map(int, re.findall(r'(?<=#)(.*)(?=,)', test_string)))[0]
+    Lines = []
+    with open(os.path.join(sys.path[0], "Scraper.txt"),  'r') as scraped_list:  # Use file to refer to the file object
+        #scraped_list.seek(0)
+        Lines = scraped_list.readlines()
+        Lines = remove_duplicates(Lines)
+        Lines.sort(key=num_sort)   
+        #Lines = remove_duplicates(Lines).sort()
+    with open(os.path.join(sys.path[0], "modified_Scraper.txt"),  'a') as outputfile:  # Use file to refer to the file object
+        for line in Lines:
+            outputfile.write(str(line))    
 
 def form_is_valid():
     collection_link = collection_link_input.input_field.get()
@@ -270,7 +271,8 @@ def form_is_valid():
 
     file_expected_end = "/src"
     f_end_len = len("/src")
-    f_end = upload_path[-f_end_len:]
+    file_path = json_path.get_path()
+    f_end = file_path[-f_end_len:]
 
     if end_num_input.input_field.get() <= start_num_input.input_field.get():
         warn("Invalid Form", "Invalid Input \n\tEnd number [" + str(end_num_input.input_field.get()) + " ] " + "\nShould be less than \n\tStart number [ " + str(start_num_input.input_field.get()) + " ]")
@@ -290,7 +292,7 @@ def form_is_valid():
 def save():
     if form_is_valid():
         try:
-            input_save_list.insert(0, upload_path)
+            input_save_list.insert(0, json_path.get_path())
             collection_link_input.save_inputs(1)
             description_credit_input.save_inputs(2)
             description_footer_input.save_inputs(3)
@@ -309,6 +311,11 @@ def save():
     else:
         log("Form is not valid. Check the README.md for form information. Verify form is properly filled out.")
 
+##---END---######################################----UTILITY-----#####################################---END---##
+
+
+##--START--######################################------MAIN------#####################################--START--##
+
 def main_program_loop(prgrm):
 
     if len(end_num_input.input_field.get()) > 5 :
@@ -316,7 +323,7 @@ def main_program_loop(prgrm):
         sys.exit()
 
     project_path = main_directory
-    file_path = upload_path
+    file_path = json_path.get_path()
     collection_link = collection_link_input.input_field.get()
     loop_description_credit = description_credit_input.input_field.get() #Digital art generated by DALL-E 2 using OpenAI.
     loop_description_footer = description_footer_input.input_field.get() #Willow generated this image in part with GPT-3, OpenAI's large-scale language-generation model. Upon generating draft language, Willow reviewed, edited, and revised the language to their own liking and takes ultimate responsibility for the content of this publication.
@@ -989,145 +996,12 @@ def main_program_loop(prgrm):
     driver.get("https://www.opensea.io")
     info("Upload Complete")
 
+##---END---######################################------MAIN------#####################################---END---##  
 
-  
-def collection_scraper():#HKN
-    
-    collection_links=[]
-    first_top_list=[]
-    line_count=0
 
-    project_path = main_directory
-    options = webdriver.ChromeOptions()
-    options.add_argument("--disable-blink-features=AutomationControlled")
-    options.add_experimental_option("debuggerAddress", "localhost:8989")
-    driver = webdriver.Chrome(executable_path=project_path + "/chromedriver.exe",options=options)
-    wait = WebDriverWait(driver, 60)
-    #driver.get(driver.current_url+"?search[sortAscending]=true&search[sortBy]=CREATED_DATE")# collection link
-    print("Wait 55 Seconds")
-    #time.sleep(55)
-    for sny in range(55):
-        print(str(55-sny))
-        time.sleep(1)
+##--START--######################################------GUI-------#####################################--START--##
 
-    #wait = WebDriverWait(driver, 60)
-    def wait_xpath(code):
-        wait.until(ExpectedConditions.presence_of_element_located((By.XPATH, code)))
-
-    my_divs = WebDriverWait(driver, 120).until(ExpectedConditions.presence_of_all_elements_located((By.XPATH, '//div[@role="gridcell" or @role="card"][contains(@style,"top")]')))
-
-    for my_div in my_divs:
-        #print(my_div.value_of_css_property("top"))
-        top_list_item =int(my_div.value_of_css_property("top").replace("px", ""))
-        if(top_list_item > 0):
-            first_top_list.append(top_list_item)
-        elif(top_list_item == 0):
-            line_count = line_count + 1
-
-    find_min = min(first_top_list)
-    control_line = len(set(first_top_list))-1
-    Top_value = 0
-
-    next_nft = driver.find_element(By.XPATH, '//div[@role="gridcell"  or @role="card"][contains(@style,"top: '+ str(Top_value) +'px")]')
-    driver.execute_script("arguments[0].scrollIntoView(true);",next_nft)
-    print("Wait 5 Seconds")
-    time.sleep(5)
-
-    #total_items=int(Total_Items.input_field.get()) #HKN
-    #collection_count_text = driver.find_element(By.XPATH, '//div[@class="AssetSearchView--results-count"]/p').text
-    collection_count_text = driver.find_element(By.XPATH, '//div[@class="AssetSearchView--results collection--results AssetSearchView--results--phoenix"]//p').text
-    c_num = ""
-    for c in collection_count_text:
-        if c.isdigit():
-            c_num = c_num + c
-    total_items = int(c_num)
-
-    total_line =3
-    if int(total_items/line_count) != (total_items/line_count):
-        total_line = int(total_items/line_count) +1
-    else:
-        total_line = total_items/line_count
-
-    for my_line in range(total_line):#total_line or some integer like 20
-        #presence_of_all_elements_located
-        if my_line !=0 and my_line%50==0:
-            for sny in range(60):
-                print(str(60-sny))
-                time.sleep(1)
-
-        if my_line<(total_line-control_line-1):
-            WebDriverWait(driver, 120).until(ExpectedConditions.visibility_of_all_elements_located((By.XPATH, '//div[@role="gridcell" or @role="card"][contains(@style,"top: '+ str(Top_value + find_min * control_line) +'px")][last()='+str(line_count)+']')))
-        elif my_line == (total_line-control_line-1):
-            print("Wait  30 Seconds")
-            time.sleep(30)
-
-        last_string='[last()='+str(line_count)+']'
-        if (my_line + 1) == total_line:
-            last_string =""
-        nftler = WebDriverWait(driver, 120).until(ExpectedConditions.visibility_of_all_elements_located((By.XPATH, '//div[@role="gridcell" or @role="card"][contains(@style,"top: '+ str(Top_value) +'px")]'+ last_string)))
-        for my_nft in nftler:
-            #for sayi in range(5):
-                #WebDriverWait(driver, 120).until(ExpectedConditions.visibility_of_all_elements_located((By.XPATH, '//div[@role="gridcell" or @role="card"][contains(@style,"top: '+ str(Top_value) +'px")]['+str(sayi+1)+']//div[@class="AssetCardFooter--name"][string-length(text()) > 0]' )))
-            wait_E = True
-            while wait_E:
-                try:
-                    #nft_Name = my_nft.find_element(By.XPATH, './/div[@class="AssetCardFooter--name"]').text
-                    nft_Name = my_nft.find_element(By.XPATH, './/a//img').get_attribute('alt')
-                    nft_Link = my_nft.find_element(By.XPATH, './/a').get_attribute('href')
-                    print(my_nft.find_element(By.XPATH, './/a').get_attribute('href'))
-                    with open(os.path.join(sys.path[0], "Scraper.txt"),  'a') as outputfile:  # Use file to refer to the file object
-                        outputfile.write(nft_Name + "," + nft_Link + "\n")
-                    wait_E = False
-                except:
-                    print("Nftnin bir bilgisi bulunamadı tekrar deneniyor")
-                    wait_E = True
-            
-            #time.sleep(0.1)
-        print("My Line : " + str(my_line))
-        if (my_line + 1) != total_line:
-            Top_value = Top_value + find_min
-            WebDriverWait(driver, 120).until(ExpectedConditions.presence_of_element_located((By.XPATH, '//div[@role="gridcell" or @role="card"][contains(@style,"top: '+ str(Top_value) +'px")]')))
-            next_nft = driver.find_element(By.XPATH, '//div[@role="gridcell" or @role="card"][contains(@style,"top: '+ str(Top_value) +'px")]')
-            driver.execute_script("arguments[0].scrollIntoView(true); window.scrollBy(0,60);",next_nft) 
-        #time.sleep(2)
-        
-        #driver.execute_script('element = document.body.querySelector("style[top="'+ str(Top_value) +'px"]"); element.scrollIntoView();')
-
-        #my_script = """myInterval = setInterval(function() {document.documentElement.scrollTop +="""+str(Top_value/4)+""";}, 500);
-        #setTimeout(function() {clearInterval(myInterval)}, 2000);
-        #"""
-        #driver.execute_script(my_script)
-        #driver.execute_script('document.documentElement.scrollTop +='+ str(Top_value))
-        #time.sleep(10)
-
-def remove_duplicates(liste):
-    liste2 = []
-    if liste: 
-        for item in liste:
-            if item not in liste2:
-                liste2.append(item)
-    else:
-        return liste
-    return liste2
-   
-def modify_Scrape_txt():#HKN
-    
-    def num_sort(test_string):
-        return list(map(int, re.findall(r'(?<=#)(.*)(?=,)', test_string)))[0]
-    Lines = []
-    with open(os.path.join(sys.path[0], "Scraper.txt"),  'r') as scraped_list:  # Use file to refer to the file object
-        #scraped_list.seek(0)
-        Lines = scraped_list.readlines()
-        Lines = remove_duplicates(Lines)
-        Lines.sort(key=num_sort)   
-        #Lines = remove_duplicates(Lines).sort()
-    with open(os.path.join(sys.path[0], "modified_Scraper.txt"),  'a') as outputfile:  # Use file to refer to the file object
-        for line in Lines:
-            outputfile.write(str(line))    
-    
-def qf(quickPrint="test"):
-    print(len(driver.window_handles))
-
+# Radio Buttons
 duration_value = IntVar()
 duration_value.set(value=180)
 duration_date = Frame(root, padx=0, pady=1)
@@ -1150,14 +1024,15 @@ tk.Radiobutton(captcha_date, text="Buster", variable=captcha_value, value="buste
 captcha_date.label = Label(root, text="Captcha:", anchor="nw", width=20, height=2 )
 captcha_date.label.grid(row=16, column=0, padx=12, pady=0)
 
+# Checkboxes
 isSensitive = tkinter.Checkbutton(root, text='Sensitive Content', var=is_sensitivecontent,   width=49, anchor="w")
 isSensitive.grid(row=17, column=1)
 isCreate = tkinter.Checkbutton(root, text='Complete Listing', var=is_listing, width=49, anchor="w")
 isCreate.grid(row=19, column=1)
 isPolygon = tkinter.Checkbutton(root, text='Polygon Blockchain',  var=is_polygon, width=49, anchor="w")
 isPolygon.grid(row=20, column=1)
-upload_folder_input_button = tkinter.Button(root, width=50, height=1,  text="Add NFTs Upload Folder", command=upload_folder_input)
-upload_folder_input_button.grid(row=21, column=0, columnspan=2, padx=2)
+
+# Buttons
 open_browser = tkinter.Button(root, width=50, height=1,  text="Open Chrome Browser", command=open_chrome_profile)
 open_browser.grid(row=23, column=0, columnspan=2, pady=2)
 button_save = tkinter.Button(root, width=50, height=1,  text="Save This Form", command=save) 
@@ -1166,25 +1041,14 @@ button_start = tkinter.Button(root, width=44, height=2, bg="#1b5e1f", fg="white"
 button_start['font'] = font.Font(size=10, weight='bold')
 button_start.grid(row=25, column=0, columnspan=2, pady=2)
 
-button_onlyListing = tkinter.Button(root, width=44, height=2, bg="#429bf5", fg="white", text="List Only", command=partial(main_program_loop, "OnlyListing"))
+button_onlyListing = tkinter.Button(root, width=44, height=2, bg="#2eb5cd", fg="white", text="List Only", command=partial(main_program_loop, "OnlyListing"))
 button_onlyListing['font'] = font.Font(size=10, weight='bold')
 button_onlyListing.grid(row=29,  column=0, columnspan=2, pady=2)
 
-#button_test = tkinter.Button(root, width=44, height=2, bg="#aa5533", fg="white", text="Test", command=lambda: qf("OnlyListing"))
-#button_test['font'] = font.Font(size=10, weight='bold')
-#button_test.grid(row=30, column=1, pady=2)
-#HKN
-#Total_Items = InputField("Total İtems:", 26, 0, 10, 10)
-#Control_Line_Number = InputField("Control Line Number:", 28, 0, 11, 40)
-#Items_In_Line = InputField("İtems Number in Line:", 29, 0, 12, 40)
+button_renameImages = tkinter.Button(root, width=44, height=2, bg="#4c8c49", fg="white", text="Rename Images", command=partial(main_program_loop, "RenameImages"))
+button_renameImages['font'] = font.Font(size=10, weight='bold')
+button_renameImages.grid(row=30,  column=0, columnspan=2, pady=2)
 
-try:
-    with open(save_file_path(), "rb") as infile:
-        new_dict = pickle.load(infile)
-        global upload_path
-        Name_change_img_folder_button(new_dict[0])
-        upload_path = new_dict[0]
-except FileNotFoundError:
-    pass
-#####BUTTON ZONE END#######
+##---END---######################################------GUI-------#####################################---END---##
+
 root.mainloop()
