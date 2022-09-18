@@ -5,3 +5,4 @@ src/images/
 ~*.*
 __*__/
 build/
+.DS_Store
