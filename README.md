@@ -1,5 +1,11 @@
 # OpenSea Uploader
-A bulk uploader for uploading NFTs to OpenSea using Selenium, Excel, VBA, and Python.
+## About
+Welcome to OpenSea Uploader, a powerful bulk uploader designed to streamline the process of uploading NFTs to OpenSea. This application leverages the combined capabilities of Selenium, Excel, VBA, and Python to provide an efficient solution for managing and uploading your NFT collections.
+
+## Features
+Bulk Upload: Seamlessly upload multiple NFTs to OpenSea in one go, saving time and effort.
+Integration with Excel and VBA: Utilize Excel and VBA functionalities to manage and organize your NFT data.
+Selenium Automation: Leverage Selenium for browser automation, ensuring a smooth and reliable uploading process.
   
 # Support the Author
 Want to support the author?<br>
