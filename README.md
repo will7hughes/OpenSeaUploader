@@ -1,9 +1,3 @@
-<p align="center">
-  <a href="https://opensea.io/collection/willow-away">
-    <img src="https://github.com/will7hughes/OpenSeaUploader/blob/main/cover_uploader.jpg" width="100%" />
-  </a>
-</p>
-
 # OpenSea Uploader
 A bulk uploader for uploading NFTs to OpenSea using Selenium, Excel, VBA, and Python.
   
