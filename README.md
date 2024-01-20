@@ -9,7 +9,6 @@ A bulk uploader for uploading NFTs to OpenSea using Selenium, Excel, VBA, and Py
   
 # Support the Author
 Want to support the author?<br>
-Check out their OpenSea Collection: https://opensea.io/collection/willow-away<br>
 Paypal: https://paypal.me/willowaway<br>
 Venmo: @Willow_Hughes
 Wallet Address: <B>0xC2229aD79F60526CaD49629200584a81cC1B1b28</b><br>
